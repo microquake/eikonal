@@ -1,0 +1,8 @@
+build/
+.idea
+build_old/
+dist/
+*.vimproject
+bin/
+__pycache__
+

@@ -12,7 +12,7 @@ TODO : BIG DESCRIPTION OF EXCHANGE DATA
 """
 
 import numpy as np
-import cPickle as pickle
+import pickle
 import copy
 
 from agstd.decorators import memoize

@@ -13,7 +13,7 @@ from Cython.Distutils import build_ext
 from Cython.Build import cythonize
 import numpy as np
 
-cython_cflags = ["-Wno-unused"] # NUMPY EXTENSION MADNESS
+cython_cflags = ["-Wno-unused"]  # NUMPY EXTENSION MADNESS
 cython_include_dirs = ['build/include']
 
 setup_requires = [
@@ -37,7 +37,6 @@ setup(
     ext_modules=extensions,
     packages=['eikonal', 'eikonal.vis'],
     name='Eikonal',
-    version = '0.0.1',
     include_dirs=[np.get_include()],
     description="",
     author="J-Pascal Mercier",

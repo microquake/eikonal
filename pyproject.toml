@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eikonal"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = ["Jean-Pascal Mercier <jp.mercier@gmail.com>"]
 license = "MIT"
@@ -10,6 +10,8 @@ build = "setup.py"
 python = ">=3.8,<3.11"
 Cython = "^0.29.27"
 scipy = "^1.8.0"
+agstd = "^1.0.2"
+Mako = "^1.1.6"
 
 [tool.poetry.dev-dependencies]
 

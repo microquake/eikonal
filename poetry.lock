@@ -1,6 +1,6 @@
 [[package]]
 name = "agstd"
-version = "1.0.2"
+version = "1.0.3"
 description = ""
 category = "main"
 optional = false
@@ -126,8 +126,8 @@ content-hash = "e202c064579e60bac1a52c26db5514a7a507f81d463442e15fb9679c0e70c475
 
 [metadata.files]
 agstd = [
-    {file = "agstd-1.0.2-py3-none-any.whl", hash = "sha256:dd37f29828271050d96e0991b2edb582ad1794cc689acd6da49554c9a3f8edde"},
-    {file = "agstd-1.0.2.tar.gz", hash = "sha256:ee7bf653172e1e7b249543cabe5c941f458b2d8f0e6b5ce3a9b8a76dc13873e5"},
+    {file = "agstd-1.0.3-py3-none-any.whl", hash = "sha256:e55363473a0e8619c4508d830c33d3b544465a4ef809509a78bf54d418f1f230"},
+    {file = "agstd-1.0.3.tar.gz", hash = "sha256:ce6a86cd5478181f344a0a00721c9fb5e261e2eb1c032b8682c7ec5fcd9123ff"},
 ]
 cython = [
     {file = "Cython-0.29.27-cp27-cp27m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:af2b4e1e267737dae1732f02a9b567f58420a3e2f572dc4416829647ec109886"},

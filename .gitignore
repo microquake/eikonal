@@ -3,7 +3,6 @@ build/
 build_old/
 dist/
 *.vimproject
-bin/
 __pycache__
 *.so
 *.egg-info

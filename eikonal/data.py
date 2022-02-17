@@ -47,7 +47,7 @@ class EKTTTable(object):
             sys.stderr.write(str(data.size))
             sys.stderr.flush()
             data = np.array(data.__getitem__([tname for tname, ttype in tt_dtype]), dtype = self.dtype)
-        except ValueError, e:
+        except ValueError as e:
             data = np.asarray(data, dtype = self.dtype)
 
         self.data               = data
@@ -78,13 +78,14 @@ class EKTTTable(object):
 
 class EKPunctualData(object):
     dtype = None
-    def __init__(self, data, origin = None, scale = 1):
+
+    def __init__(self, data, origin=None, scale=1):
         try:
             for tname, ttype in self.dtype:
                 data[tname]
             self.data = data
-        except ValueError, e:
-            self.data = np.asarray(data, dtype = self.dtype)
+        except ValueError as e:
+            self.data = np.asarray(data, dtype=self.dtype)
 
         self.origin = tuple([0] * data['position'].shape[-1]) \
             if origin is None else origin
@@ -92,6 +93,7 @@ class EKPunctualData(object):
 
     def __get_position_zyx__(self):
         return self.data['position']
+
     def __set_position_zyx__(self, pos):
         self.data['position'] = pos
     position_zyx = property(__get_position_zyx__, __set_position_zyx__)
@@ -105,11 +107,9 @@ class EKPunctualData(object):
 
     position_xyz = property(__get_position_xyz__)
 
-
     def __get_size__(self):
         return self.data.size
     size = property(__get_size__)
-
 
     def add_gaussian_noise(self, position = 0, time = 0):
         pass
@@ -118,9 +118,9 @@ class EKPunctualData(object):
 class EKEventTable(EKPunctualData):
     dtype = ev_dtype
 
+
 class EKStationTable(EKPunctualData):
     dtype = st_dtype
-
 
 
 class EKImageData(object):
@@ -139,7 +139,7 @@ class EKImageData(object):
         else:
             self.data = np.zeros(shape_or_data)
 
-        self.origin  = tuple([0] * self.data.ndim) if origin is None else origin
+        self.origin = tuple([0] * self.data.ndim) if origin is None else origin
         self.spacing = spacing
 
     def transform_to(self, values):
@@ -160,7 +160,7 @@ class EKImageData(object):
     def homogenous_like(self, value):
         data = np.empty_like(self.data)
         data.fill(value)
-        return EKImageData(data, self.spacing, origin = self.origin)
+        return EKImageData(data, self.spacing, origin=self.origin)
 
     def copy(self):
         cp = copy.deepcopy(self)

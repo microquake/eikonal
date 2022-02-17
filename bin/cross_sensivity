@@ -36,20 +36,23 @@ def cross_sensivity_main(velocity, standard_velocity, raypath, grid_id):
     :param grid_id: The column indentifier used to identify the grid
     """
 
-    if (velocity.check_compatibility(standard_velocity)):
-        raise ValueError("Standard Velocity and Velocity must have same" \
+    if velocity.check_compatibility(standard_velocity):
+        raise ValueError("Standard Velocity and Velocity must have same"
                          "origin, spacing and shape")
 
     vgrid = velocity.data
     svgrid = standard_velocity.data
 
-    description = { grid_id : vgrid.shape }
+    description = {grid_id: vgrid.shape}
     if len(raypath['rays']) == 0:
-        return {'residual' : np.array([]), 'description' : description, 'grid_id' : [] }
+        return {'residual': np.array([]), 'description': description,
+                'grid_id': [] }
     max_len = np.max([len(r) for r in raypath['rays']])
 
-    indices_buffer = np.zeros(max_len * (4 ** vgrid.ndim) * 2,  dtype = 'uintp')
-    sensivity_buffer = np.zeros(max_len * (4 ** vgrid.ndim) * 2 , dtype = 'float')
+    indices_buffer = np.zeros(max_len * (4 ** vgrid.ndim) * 2,
+                              dtype='uintp')
+    sensivity_buffer = np.zeros(max_len * (4 ** vgrid.ndim) * 2,
+                                dtype='float')
 
     Gindices_X = []
     Gindices_Y = []
@@ -70,11 +73,8 @@ def cross_sensivity_main(velocity, standard_velocity, raypath, grid_id):
     GA = sc.sparse.coo_matrix((Gfrechet, (Gindices_Y, Gindices_X)),
                               (len(r), vgrid.size)).tocsr()
 
-
-
-    return {"residual" : r, grid_id : GA,
-            "description" : description}
-
+    return {"residual": r, grid_id: GA,
+            "description": description}
 
 
 if __name__ == "__main__":

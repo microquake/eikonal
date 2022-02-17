@@ -25,13 +25,10 @@ import eikonal.raytrace as raytrace
 
 import sys
 
-from itertools import izip
-
 sys.stdout = sys.stderr
 
 
-
-def buildray(arrival, velocity, events, h = 1):
+def buildray(arrival, velocity, events, h=1):
     """
     :param arrival: This is the arrival grid as calculated by an eikonal \
             solver.
@@ -51,24 +48,23 @@ def buildray(arrival, velocity, events, h = 1):
 
     max_len = np.sqrt(np.sum(np.array(velocity.data.shape) ** 2))
 
-    raybuffer = np.empty((max_len * (8.0 / h), len(velocity.data.shape)), dtype='float64')
+    raybuffer = np.empty((max_len * (8.0 / h), len(velocity.data.shape)),
+                         dtype='float64')
 
     rays = []
 
-    #velocity.origin = np.array(velocity.origin)
-    #PB = ProgressBar(size=len(current_events))
-
     for i, evdesc in enumerate(current_events):
-        sys.stdout.write("\rProcessing event %d of %d" % (i, len(current_events)))
+        sys.stdout.write("\rProcessing event %d of %d" % (i,
+                                                          len(current_events)))
 
-        #PB()
         finish = tuple(velocity.transform_to(evdesc))
-        rtt, ray = raytrace.raytrace(arrival.data, velocity.data, start, finish,
-                                           raybuffer, arrival.spacing, h=h)
+        rtt, ray = raytrace.raytrace(arrival.data, velocity.data, start,
+                                     finish, raybuffer, arrival.spacing, h=h)
 
         rays.append(ray.copy())
 
     return dict(rays=rays)
+
 
 if __name__ == "__main__":
     main.main(buildray, spacing=float, arrival=np.load,

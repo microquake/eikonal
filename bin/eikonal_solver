@@ -33,7 +33,8 @@ def parse_seeds(seeds):
 
     :return: A list of tuple
     """
-    seeds = [[float(s) for s in w.split(',')] for w in seeds.strip('"').split(':')]
+    seeds = [[float(s) for s in w.split(',')] for w in
+             seeds.strip('"').split(':')]
     return np.array(seeds)
 
 def seeded_esolve(velocity, seeds, spacing, second_order = True):
@@ -51,8 +52,8 @@ def seeded_esolve(velocity, seeds, spacing, second_order = True):
     arrival = np.empty_like(viscosity)
     arrival.fill(np.inf)
 
-    esolver.SFMM(seeds + 2, np.zeros(len(seeds)), tag, viscosity, arrival, spacing,
-                 second_order = second_order)
+    esolver.SFMM(seeds + 2, np.zeros(len(seeds)), tag, viscosity, arrival,
+                 spacing, second_order=second_order)
 
     return arrival.__getitem__([slice(2,-2)] * len(shape))
 
@@ -72,7 +73,8 @@ def tagged_esolve(tag, velocity, arrival, spacing, second_order = True):
     os_arrival.fill(np.inf)
     os_arrival.__setitem__([slice(2, -2)] * arrival.ndim, arrival)
 
-    esolver.I_FMM(os_tag, viscosity, os_arrival, spacing, second_order = second_order)
+    esolver.I_FMM(os_tag, viscosity, os_arrival, spacing,
+                  second_order=second_order)
 
     return os_arrival.__getitem__([slice(2,-2)] * arrival.ndim)
 
@@ -98,7 +100,9 @@ def esolve(velocity, seeds, subgrid_spacing = 10, second_order = True, spacing =
     :return: EKImageData reprenting the arrival grid.
     """
     if np.any(velocity <= 0):
-        raise ValueError("Eikonal Solver Relies On the Causality of the solution. The Velocity grid MUST be all positive values")
+        raise ValueError("Eikonal Solver Relies On the Causality of the "
+                         "solution. The Velocity grid MUST be all positive "
+                         "values")
     if isinstance(velocity, eikonal.data.EKImageData):
         idata = velocity
         velocity = idata.data
@@ -106,35 +110,43 @@ def esolve(velocity, seeds, subgrid_spacing = 10, second_order = True, spacing =
         seeds = idata.transform_to(seeds)
     else:
         if spacing is None:
-            raise ValueError("argument --spacing is needed withouth a grid description")
-        idata = eikonal.data.EKImageData(velocity, spacing = spacing, origin = [0] * velocity.ndim)
+            raise ValueError("argument --spacing is needed withouth a grid "
+                             "description")
+        idata = eikonal.data.EKImageData(velocity, spacing=spacing,
+                                         origin=[0] * velocity.ndim)
 
     for s in seeds:
         if not check_boundary(s, velocity.shape):
             # log.critical("Seed outside grid boundary")
-            print "Seed outside grid boundary"
+            print("Seed outside grid boundary")
             sys.exit(1)
 
-    # Disabled until more testing
-    #if (len(seeds) == 1) and (subgrid_spacing != 1):
     if False:
         ndim = velocity.ndim
         seed = seeds[0]
         s_clamped = seed.astype('int')
-        subgrid_slice = [slice(max(0, s_c - 2), min(s_c + 4, s)) for s, s_c in zip(velocity.shape, s_clamped)]
+        subgrid_slice = [slice(max(0, s_c - 2), min(s_c + 4, s))
+                         for s, s_c in zip(velocity.shape, s_clamped)]
 
         subgrid_shape   = np.array([6 * subgrid_spacing] * ndim)
         subgrid         = np.empty(subgrid_shape)
         subgrid_origin  = s_clamped - 2
         subseed         = (seed - subgrid_origin) * subgrid_spacing
 
-        subgrid_pos         = np.indices(subgrid_shape) / subgrid_spacing + subgrid_origin.reshape((ndim,) + tuple([1] * ndim))
+        subgrid_pos         = np.indices(subgrid_shape) / subgrid_spacing + \
+                              subgrid_origin.reshape((ndim,) +
+                                                     tuple([1] * ndim))
         subgrid_indices     = np.indices([6] * ndim) * subgrid_spacing
 
         subgrid_velocity    = sc.ndimage.map_coordinates(velocity, subgrid_pos)
-        subgrid_arrival     = seeded_esolve(subgrid_velocity, np.array([subseed]), idata.spacing / subgrid_spacing, second_order = second_order)
+        subgrid_arrival     = seeded_esolve(subgrid_velocity,
+                                            np.array([subseed]),
+                                            idata.spacing / subgrid_spacing,
+                                            second_order=second_order)
 
-        grid_indices        = subgrid_indices / subgrid_spacing + subgrid_origin.reshape((ndim,) + tuple([1] * ndim))
+        grid_indices        = subgrid_indices / subgrid_spacing + \
+                              subgrid_origin.reshape((ndim,) +
+                                                     tuple([1] * ndim))
 
         mask                = True
         for si, s in zip(grid_indices, velocity.shape):
@@ -145,9 +157,10 @@ def esolve(velocity, seeds, subgrid_spacing = 10, second_order = True, spacing =
         tag.fill(0)
         tag[[gi[mask] for gi in grid_indices]] = 1
 
-        arrival = np.empty(velocity.shape, dtype = 'float64')
+        arrival = np.empty(velocity.shape, dtype='float64')
         arrival.fill(np.inf)
-        arrival[[gi[mask] for gi in grid_indices]] = subgrid_arrival[[si[mask] for si in subgrid_indices]]
+        arrival[[gi[mask] for gi in grid_indices]] = \
+            subgrid_arrival[[si[mask] for si in subgrid_indices]]
 
         #import scipy
         #print subgrid_arrival[[si[mask] for si in subgrid_indices]]
@@ -155,15 +168,17 @@ def esolve(velocity, seeds, subgrid_spacing = 10, second_order = True, spacing =
         #print subgrid_indices
         #scipy.misc.imshow(np.where(arrival == np.inf, 0, arrival))
 
-        idata.data = tagged_esolve(tag, velocity, arrival, idata.spacing, second_order = second_order)
+        idata.data = tagged_esolve(tag, velocity, arrival, idata.spacing,
+                                   second_order=second_order)
     else:
-        idata.data = seeded_esolve(velocity, seeds, idata.spacing, second_order = second_order)
+        idata.data = seeded_esolve(velocity, seeds, idata.spacing,
+                                   second_order=second_order)
 
     idata.seeds = seeds
 
     return idata
 
 
-
 if __name__ == "__main__":
-    main.main(esolve, spacing = float, seeds = parse_seeds, velocity = np.load, subgrid_spacing = int)
+    main.main(esolve, spacing=float, seeds=parse_seeds, velocity=np.load,
+              subgrid_spacing=int)

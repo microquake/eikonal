@@ -23,8 +23,6 @@ import eikonal.raytrace as raytrace
 
 import sys
 
-from itertools import izip
-
 sys.stdout = sys.stderr
 
 
@@ -47,31 +45,34 @@ def buildray(arrival, velocity, traveltime, h = 1):
     stdesc = tttable.station_row
 
 
-    start = tuple(velocity.transform_to(stdesc['position'][:arrival.data.ndim]))
+    start = tuple(velocity.transform_to(stdesc['position']
+                                        [:arrival.data.ndim]))
     current_events = tttable.event_rows
 
     max_len = np.sqrt(np.sum(np.array(velocity.data.shape) ** 2))
 
-    raybuffer = np.empty((max_len * (8.0 / h), len(velocity.data.shape)), dtype = 'float64')
+    raybuffer = np.empty((max_len * (8.0 / h), len(velocity.data.shape)),
+                         dtype='float64')
 
     rays = []
     r = []
 
     for i, evdesc in enumerate(current_events):
-        finish = tuple(velocity.transform_to(evdesc['position'][:arrival.data.ndim]))
-        rtt, ray = raytrace.raytrace(arrival.data, velocity.data, start, finish,
-                                           raybuffer, arrival.spacing, h = h)
-        tt = tttable.data['traveltime'][i] - stdesc['delta_t'] + evdesc['delta_t']
+        finish = tuple(velocity.transform_to(evdesc['position']
+                                             [:arrival.data.ndim]))
+        rtt, ray = raytrace.raytrace(arrival.data, velocity.data, start,
+                                     finish, raybuffer, arrival.spacing, h=h)
+        tt = tttable.data['traveltime'][i] - stdesc['delta_t'] + \
+             evdesc['delta_t']
         ri = (tt - rtt)
 
         rays.append(ray.copy())
         r.append(ri)
 
-
-    return dict(rays = rays, residuals = r,
-                event_id = current_events['id'], station_id = tttable.station_id)
+    return dict(rays=rays, residuals=r,
+                event_id=current_events['id'], station_id=tttable.station_id)
 
 
 if __name__ == "__main__":
-    main.main(buildray, spacing = float, arrival = np.load,
-              velocity = np.load, traveltime = np.load)
+    main.main(buildray, spacing=float, arrival=np.load,
+              velocity=np.load, traveltime=np.load)

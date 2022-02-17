@@ -23,6 +23,7 @@ import scipy.sparse
 
 sys.stdout = sys.stderr
 
+
 def dd(input_file):
     """
     :param input_file: The Station-wise frechet derivative
@@ -33,7 +34,8 @@ def dd(input_file):
 
     nrows = A[A['description'].keys()[0]].shape[0]
     if nrows != 1:
-        ddmat = scipy.sparse.dia_matrix((([1] * (nrows), [-1] * (nrows)), (0, 1)), (nrows -1, nrows))
+        ddmat = scipy.sparse.dia_matrix((([1] * (nrows), [-1] * (nrows)),
+                                         (0, 1)), (nrows - 1, nrows))
         for key in A['description']:
             A[key] = ddmat * A[key]
         A['residual'] = ddmat * A['residual']

@@ -20,13 +20,14 @@ import pickle
 
 try:
     import simplejson as json
-except ImportError, e:
+except ImportError as e:
     import json
 
 
 class UniformWeight(object):
     def __call__(self, residual):
         return sc.sparse.eye(residual.size, residual.size)
+
 
 class GaussianWeight(object):
     def __init__(self, sigma = 0):
@@ -37,7 +38,8 @@ class GaussianWeight(object):
         weights = np.exp(-0.5 * residual ** 2 / var)
         threshold = np.exp(-0.5 *  self.sigma ** 2)
         tweights = np.where(weights > threshold, threshold, weights)
-        return sc.sparse.dia_matrix((tweights / threshold, (0, )), shape = (residual.size, residual.size))
+        return sc.sparse.dia_matrix((tweights / threshold, (0, )),
+                                    shape=(residual.size, residual.size))
 
 class BoxWeight(object):
     def __init__(self, sigma = 0):
@@ -48,14 +50,16 @@ class BoxWeight(object):
         weights = np.exp(-0.5 * residual ** 2 / var)
         threshold = np.exp(-0.5 *  self.sigma ** 2)
         tweights = np.where(weights > threshold, threshold, 0)
-        return sc.sparse.dia_matrix((tweights / threshold, (0, )), shape = (residual.size, residual.size))
+        return sc.sparse.dia_matrix((tweights / threshold, (0, )),
+                                    shape=(residual.size, residual.size))
 
 wtypes = {"gaussian" : GaussianWeight,
           "uniform"  : UniformWeight,
           "box"      : BoxWeight}
 
 
-def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats, itype = 'linear'):
+def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats,
+              itype='linear'):
     import sys
 
     wfun = wtypes[weighting['name']](*weighting['args'])
@@ -73,14 +77,13 @@ def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats, itype =
     #DT_mat = DT_mat.T * DT_mat
     #print DT_mat
 
-
-
     if itype == 'linearcg':
         inversion = linear.CGInversion()
         for X in inversion(X0, A_mat, R_vect, I_vect, DT_mat, P_mat,
-                                  maxiter = max_iter, gtol = gtol, batch = batch):
+                                  maxiter=max_iter, gtol=gtol, batch=batch):
             g = X + I_vect
-            sys.stderr.write("%f, %f, %e\r" % (g.min(), g.max(), inversion.jnorms[-1]))
+            sys.stderr.write("%f, %f, %e\r" % (g.min(), g.max(),
+                                               inversion.jnorms[-1]))
         s = inversion.jnorms
 
     elif itype == 'newtoncg':
@@ -89,10 +92,11 @@ def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats, itype =
         R_vect = R_vect / norm
 
         def callback(m):
-            print m.min(), m.max()
+            print(m.min(), m.max())
 
         f = linear.CGObj(A_mat, R_vect, I_vect, DT_mat, P_mat)
-        X = scipy.optimize.fmin_ncg(f, X0, f.fprime, fhess_p = f.fhess_p, maxiter = max_iter, callback = callback)
+        X = scipy.optimize.fmin_ncg(f, X0, f.fprime, fhess_p=f.fhess_p,
+                                    maxiter=max_iter, callback=callback)
         s = np.array([])
     else:
         raise ValueError("Uknown inversion type")
@@ -101,7 +105,6 @@ def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats, itype =
         pickle.dump(s, open(stats, 'w'),
                     protocol = pickle.HIGHEST_PROTOCOL)
     return X + I_vect
-
 
 
 if __name__ == '__main__':

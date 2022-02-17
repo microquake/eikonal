@@ -17,11 +17,10 @@ import scipy.sparse
 import os
 
 import eikonal.raytrace as raytrace
+from eikonal import sensivity
 import eikonal.solver as esolver
 
 import sys
-
-from itertools import izip
 
 sys.stdout = sys.stderr
 
@@ -33,11 +32,9 @@ def traveltime(velocity, station, event, eventlst, spacing, h):
 
     st, ev = [np.load(s) for s in [velocity, station, event, eventlst]]
 
-
     vgrid = np.load(velocity)
 
     esolver.SFMM
-
 
 
 if __name__ == "__main__":

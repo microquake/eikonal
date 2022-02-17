@@ -24,10 +24,11 @@ grid_desc = [ ("X", float, str, "X", 30),
 
 grid_parser = agstd.text.TXTParser(grid_desc, grid_dtype)
 
+
 def export_txt_grid(grid, output):
     indices = np.indices(grid.data.shape) * grid.spacing + \
             np.reshape(grid.origin, [grid.data.ndim] + [1] * grid.data.ndim)
-    outgrid = np.zeros(grid.data.size, dtype = grid_dtype)
+    outgrid = np.zeros(grid.data.size, dtype=grid_dtype)
 
     for c, i in zip(["X", "Y", "Z"], indices):
         outgrid[c] = i.ravel()
@@ -36,6 +37,7 @@ def export_txt_grid(grid, output):
 
     grid_parser.dump(output, outgrid)
 
+
 if __name__ == '__main__':
     import agstd.main
-    agstd.main.main(export_txt_grid, grid = np.load)
+    agstd.main.main(export_txt_grid, grid=np.load)

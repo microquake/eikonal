@@ -10,7 +10,7 @@ __doc__ = """
 
 import cycl
 import numpy as np
-import scipy as sc.sparse
+import scipy as sc
 
 eikonal_kernel = \
 """
@@ -81,8 +81,8 @@ context = platform.createContext([device])
 program = context.createProgramWithSource(eikonal_kernel)
 try:
     program.build()
-except cycl.CLError, e:
-    print program.getBuildLog(device)
+except cycl.CLError as e:
+    print(program.getBuildLog(device))
 
 kernel = program.createKernel("eikonal3")
 kernel.parameters = (cycl.parameter_type.MEM_TYPE,
@@ -107,7 +107,9 @@ send_result = cycl.CLWriteBufferNDArray(gpu_result, cpu_arrival)
 send_viscosity = cycl.CLWriteBufferNDArray(gpu_viscosity, cpu_viscosity)
 retrieve_arrival = cycl.CLReadBufferNDArray(cpu_arrival, gpu_arrival)
 
-eiko_cmd = cycl.CLNDRangeKernel(kernel, global_work_size = (shape[0] - 4, shape[1] - 4, 1), local_work_size = (256, 1,1))
+eiko_cmd = cycl.CLNDRangeKernel(kernel, global_work_size=
+                                        (shape[0] - 4, shape[1] - 4, 1),
+                                local_work_size=(256, 1, 1))
 
 queue.enqueue(send_arrival)
 queue.enqueue(send_result)
@@ -115,6 +117,8 @@ queue.enqueue(send_viscosity)
 
 
 kernel.setArgs(gpu_result, gpu_arrival, gpu_viscosity, shape[1])
+
+
 def eikonal():
     for i in range(1000):
         kernel.setArgs(gpu_result, gpu_arrival, gpu_viscosity, shape[1])
@@ -124,8 +128,8 @@ def eikonal():
         queue.enqueue(eiko_cmd)
     queue.finish()
 
-eikonal()
 
+eikonal()
 
 queue.enqueue(retrieve_arrival)
 queue.finish()

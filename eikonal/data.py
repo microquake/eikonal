@@ -39,7 +39,8 @@ class EKTTTable(object):
     :param stafile: u
     """
     dtype = tt_dtype
-    def __init__(self, data, staid, evnfile = None, stafile = None):
+
+    def __init__(self, data, staid, evnfile=None, stafile=None):
         try:
             for tname, ttype in tt_dtype:
                 data[tname]
@@ -102,7 +103,7 @@ class EKPunctualData(object):
         position_zyx = self.data['position']
         position_xyz = np.empty_like(position_zyx)
         for i in range(position_zyx.shape[1]):
-            position_xyz[:,i] = position_zyx[:,-(i + 1)]
+            position_xyz[:, i] = position_zyx[:, -(i + 1)]
         return position_xyz
 
     position_xyz = property(__get_position_xyz__)
@@ -111,7 +112,7 @@ class EKPunctualData(object):
         return self.data.size
     size = property(__get_size__)
 
-    def add_gaussian_noise(self, position = 0, time = 0):
+    def add_gaussian_noise(self, position=0, time=0):
         pass
 
 

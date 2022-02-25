@@ -19,8 +19,7 @@ from agstd.decorators import memoize
 
 # This is the data description for the input array describing the event
 #
-ev_dtype = [('name',       'str'),
-            ('id',          'int'),
+ev_dtype = [('id',          'int'),
             ('position',    'float',    (3,)),
             ('delta_t',     'float')]
 
@@ -29,6 +28,7 @@ st_dtype = ev_dtype
 tt_dtype = [('id',          'int'),
             ('event_id',    'int'),
             ('traveltime',  'float')]
+
 
 class EKTTTable(object):
     """
@@ -47,9 +47,10 @@ class EKTTTable(object):
             import sys
             sys.stderr.write(str(data.size))
             sys.stderr.flush()
-            data = np.array(data.__getitem__([tname for tname, ttype in tt_dtype]), dtype = self.dtype)
+            data = np.array(data.__getitem__([tname for tname, ttype in
+                                              tt_dtype]), dtype=self.dtype)
         except ValueError as e:
-            data = np.asarray(data, dtype = self.dtype)
+            data = np.asarray(data, dtype=self.dtype)
 
         self.data               = data
         self.data.dtype         = self.dtype

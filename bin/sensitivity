@@ -24,6 +24,8 @@ from scipy.ndimage import map_coordinates
 
 sys.stdout = sys.stderr
 
+np_load = np.load
+np.load = lambda *a, **k: np_load(*a, allow_pickle=True, **k)
 
 def sensivity(arrival, velocity, traveltime, grid_id, h=None):
     if h is None:

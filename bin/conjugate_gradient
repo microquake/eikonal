@@ -102,8 +102,8 @@ def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats,
         raise ValueError("Uknown inversion type")
 
     if stats is not None:
-        pickle.dump(s, open(stats, 'w'),
-                    protocol = pickle.HIGHEST_PROTOCOL)
+        pickle.dump(s, open(stats, 'wb'),
+                    protocol=pickle.HIGHEST_PROTOCOL)
     return X + I_vect
 
 

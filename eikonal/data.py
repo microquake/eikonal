@@ -65,7 +65,7 @@ class EKTTTable(object):
 
     @memoize
     def __get_event_table__(self):
-        return pickle.load(open(self.__evn_file__))
+        return pickle.load(open(self.__evn_file__, 'rb'))
     event_table = property(__get_event_table__)
 
     def __get_station_row__(self):
@@ -74,7 +74,7 @@ class EKTTTable(object):
 
     @memoize
     def __get_station_table__(self):
-        return pickle.load(open(self.__sta_file__))
+        return pickle.load(open(self.__sta_file__, 'rb'))
     station_table = property(__get_station_table__)
 
 

@@ -108,5 +108,5 @@ def CGInverse(A, D, P, initial, weighting, batch, max_iter, gtol, stats,
 
 
 if __name__ == '__main__':
-    main.main(CGInverse, batch = int, mat_iter = int,
-              gtol = float, weighting = json.loads)
+    main.main(CGInverse, batch=int, mat_iter=int, gtol=float,
+              weighting=json.loads)
